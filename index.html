@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Info</title>
+    <style>
+        body {
+          width: 100%;
+          height: 110vh;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+ @media screen and (min-width: 600px) {
+   body {
+     width: 100%;
+     height: 100vh;
+   }
+ }
+
+        .container {
+          
+            width: 600px;
+            margin-left: 10px ;
+            margin-right: 30px ;
+          
+            
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .input-field {
+            margin-top: 15px;
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+#submit{
+  width: 100px;
+  height: 30px;
+  background-color: #147EFFDB;
+  color: white;
+  border: none;
+  border-radius: 40px;
+  
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Device Information</h1>
+        
+        
+        
+  <!--Start Data Form-->
+    <!--Send Data into Email-->
+        <form action="https://formspree.io/f/xzbnkjde" method="post">
+          
+          
+          
+          
+          
+        <label for="ipAddress">IP Address</label>
+        <input type="text" id="ipAddress" name="ipAddress" class="input-field" readonly placeholder="IP Address"><br><br>
+        
+        
+        
+        
+        
+        <label for="deviceInfo">Device Information</label>
+        <input type="text" id="deviceInfo" name="deviceInfo" class="input-field" readonly placeholder="Device Information"><br><br>
+                
+        
+        
+        
+        
+        
+        <label for="location">Location</label>
+        <input type="text" id="location" name="location" class="input-field" readonly placeholder="Location"><br><br>
+                
+        
+        
+        
+        
+        
+        <label for="latitude">Latitude</label>
+        <input type="text" id="latitude" name="latitude" class="input-field" readonly placeholder="Latitude"><br><br>
+                
+        
+        
+        
+        
+        
+        <label for="longitude">Longitude</label>
+        <input type="text" id="longitude" name="longitude" class="input-field" readonly placeholder="Longitude"><br><br>
+                
+        
+        
+        
+        
+        
+        <label for="currentTime">Current Time</label>
+        <input type="text" id="currentTime" name="currentTime" class="input-field" readonly placeholder="Current Time (IST)"><br><br>
+        <center>
+        <button type="submit" id="submit">Submit</button>
+        </center>
+      </form>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Fetch IP address
+            fetch("https://api.ipify.org?format=json")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("ipAddress").value = `${data.ip}`;
+                })
+                .catch(error => console.error("Error fetching IP address:", error));
+
+            // Display device information
+            document.getElementById("deviceInfo").value = `${navigator.userAgent}`;
+
+            // Fetch current location and coordinates
+            navigator.geolocation.getCurrentPosition(position => {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                document.getElementById("location").value = `${latitude}, ${longitude}`;
+                document.getElementById("latitude").value = `${latitude}`;
+                document.getElementById("longitude").value = `${longitude}`;
+
+                // Fetch location in words
+                fetch(`https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=YOUR_API_KEY`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const locationWords = data.results[0].formatted;
+                        document.getElementById("locationWords").value = `${locationWords}`;
+                    })
+                    .catch(error => console.error("Error fetching location words:", error));
+            }, error => console.error("Error fetching location:", error));
+
+            // Display current date and time in Indian Standard Time (IST)
+            const options = { timeZone: "Asia/Kolkata", weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" };
+            const istDateTime = new Date().toLocaleString("en-US", options);
+            document.getElementById("currentTime").value = `${istDateTime}`;
+        });
+    </script>
+</body>
+</html>
